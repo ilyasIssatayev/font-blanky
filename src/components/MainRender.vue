@@ -65,8 +65,9 @@ const sketch = (p) => {
         p.pop();
 
         p.fill(255)
-        drawLine(p,plague.slice(0, 100), spacing,VECTORS)
-
+        
+        for(let i=0;i<10;i++) drawLine(p,plague.slice(0, 100), spacing,VECTORS,-i*10)
+    
     }
 
 

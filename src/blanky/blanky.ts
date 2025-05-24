@@ -1,6 +1,6 @@
 const setupCanvas = (p) => {
     p.background('#262626')
-    p.camera(0, 0, 800,    // eye position (x, y, z)
+    p.camera(0, -800, 600,    // eye position (x, y, z)
         0, 0, 0,      // center of scene (look at origin)
         0, 1, 0)      // up vector (positive Y is up)
     // p.textSize(32);
@@ -29,9 +29,9 @@ const processHeightMap = (heightMap, step = 1): [number, number][] => {
     return vectors;
 }
 
-const drawLine = (p,textLine,spacing,VECTORS) => {
+const drawLine = (p, textLine, spacing, VECTORS, Z) => {
     p.push();
-    p.translate(-((textLine.length - 1) * spacing) / 2, 0, 0); // Center horizontally
+    p.translate(-((textLine.length - 1) * spacing) / 2, 0, Z ?? 0); // Center horizontally
 
     let vector = [0, 0];
 
@@ -59,4 +59,4 @@ const drawLine = (p,textLine,spacing,VECTORS) => {
     p.pop();
 }
 
-export { setupCanvas, processHeightMap,drawLine }
+export { setupCanvas, processHeightMap, drawLine }
