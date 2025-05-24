@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import p5 from 'p5'
-import { setupCanvas,processHeightMap,drawLine } from "../blanky/blanky"
+import { setupCanvas, processHeightMap, drawLine } from "../blanky/blanky"
 import { plague } from '../blanky/book'
 
 const sketchContainer = ref(null)
@@ -9,9 +9,12 @@ let p5Instance = null
 
 let myFont = null;
 
-const waveData = [0,0,0,0,0,0,5,5,5,5,5,5,10,10,10,10,10,10,0,0,0,0,0]; // Extend as needed
+const LENGTH = 300;
+const DEPTH = 50;
+
+const waveData = [0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0]; // Extend as needed
 let VECTORS = []
-const spacing = 10;
+const spacing = 40;
 
 const sketch = (p) => {
 
@@ -22,20 +25,14 @@ const sketch = (p) => {
             console.log("font ", font)
             myFont = font
         }).catch(no => console.log("no ", no))
-        console.log("myFont ", myFont)
 
         VECTORS = processHeightMap(waveData);
-        console.log("vectors ",VECTORS)
-
-        console.log('setup')
         p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL)
-        // p.textFont(myFont); 
         setupCanvas(p)
     }
 
     p.windowResized = (_event) => {
         p.resizeCanvas(p.windowWidth, p.windowHeight)
-        // p.textFont(myFont); 
         setupCanvas(p)
     }
     let angle = 0;
@@ -47,27 +44,21 @@ const sketch = (p) => {
         p.background('#262626')
         p.textFont(myFont);
 
-        // Draw axis lines
         p.push();
-
-        // X-axis (red)
-        p.stroke(255, 0, 0);
-        p.line(0, 0, 0, 200, 0, 0);
-
-        // Y-axis (green)
-        p.stroke(0, 255, 0);
-        p.line(0, 0, 0, 0, 200, 0);
-
-        // Z-axis (blue)
-        p.stroke(0, 0, 255);
-        p.line(0, 0, 0, 0, 0, 200);
-
+        p.resetMatrix(); // Reset transform so text is not rotated/scaled
+        p.camera();      // Reset camera to default so text isn't affected by previous transformations
+        p.fill(255);     // White text
+        p.textSize(22);
+        p.text(`FPS: ${p.floor(p.frameRate())}`, -p.width / 2 + 10, -p.height / 2 + 20);
         p.pop();
 
+        p.camera(0, -800, 1000,    // eye position (x, y, z)
+        0, 0, 0,      // center of scene (look at origin)
+        0, 1, 0)    // up vector (positive Y is up)
+
         p.fill(255)
-        
-        for(let i=0;i<10;i++) drawLine(p,plague.slice(0, 100), spacing,VECTORS,-i*10)
-    
+        for (let i = 0; i < DEPTH; i++) drawLine(p, plague.slice(i * LENGTH, (i + 1) * LENGTH), spacing, VECTORS, 300 - i * 20)
+
     }
 
 
