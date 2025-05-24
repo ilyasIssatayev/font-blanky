@@ -1,47 +1,79 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import p5 from 'p5'
-import { setupCanvas } from "../blanky/blanky"
+import { setupCanvas,processHeightMap,drawLine } from "../blanky/blanky"
+import { plague } from '../blanky/book'
 
 const sketchContainer = ref(null)
 let p5Instance = null
-let angle = 0;
+
+let myFont = null;
+
+const waveData = [0,0,0,0,0,0,5,5,5,5,5,5,10,10,10,10,10,10,0,0,0,0,0]; // Extend as needed
+let VECTORS = []
+const spacing = 10;
 
 const sketch = (p) => {
+
+
     p.setup = () => {
+        myFont = p.loadFont('/fonts/soyuz_grotesk.otf');
+        myFont.then(font => {
+            console.log("font ", font)
+            myFont = font
+        }).catch(no => console.log("no ", no))
+        console.log("myFont ", myFont)
+
+        VECTORS = processHeightMap(waveData);
+        console.log("vectors ",VECTORS)
+
+        console.log('setup')
         p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL)
+        // p.textFont(myFont); 
         setupCanvas(p)
     }
 
     p.windowResized = (_event) => {
         p.resizeCanvas(p.windowWidth, p.windowHeight)
+        // p.textFont(myFont); 
         setupCanvas(p)
     }
-
+    let angle = 0;
     p.draw = () => {
-        // draw something
-        for (let i = 0; i < 5; i++) {
-            p.push(); // Save current coordinate state
+        if (!myFont.name) {
+            console.log("nope")
+            return
+        };
+        p.background('#262626')
+        p.textFont(myFont);
 
-            // Move each box along the X-axis, spaced by 150 units
-            p.translate((i - 2) * 150 * angle * 0.1, 0, 0);
+        // Draw axis lines
+        p.push();
 
-            // Rotate each box differently based on i and frame count
-            p.rotateX(angle + i * 0.1);
-            p.rotateY(angle * 0.7 + i * 0.1);
+        // X-axis (red)
+        p.stroke(255, 0, 0);
+        p.line(0, 0, 0, 200, 0, 0);
 
-            p.normalMaterial();
-            p.box(100);
+        // Y-axis (green)
+        p.stroke(0, 255, 0);
+        p.line(0, 0, 0, 0, 200, 0);
 
-            p.pop(); // Restore coordinate state to before this box’s transforms
-        }
+        // Z-axis (blue)
+        p.stroke(0, 0, 255);
+        p.line(0, 0, 0, 0, 0, 200);
 
-        angle += 0.01;
+        p.pop();
+
+        p.fill(255)
+        drawLine(p,plague.slice(0, 100), spacing,VECTORS)
 
     }
+
+
 }
 
 onMounted(() => {
+    console.log("on mounted ", sketchContainer.value)
     p5Instance = new p5(sketch, sketchContainer.value)
 })
 
