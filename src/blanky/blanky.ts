@@ -27,9 +27,10 @@ const processHeightMap = (heightMap, step = 1): [number, number][] => {
     return vectors;
 }
 const chunkSize = 5;
+let delta = 0;
 const drawLine = (p, textLine, spacing, VECTORS, Z) => {
     p.push();
-    p.translate(-((textLine.length - 1) * spacing / chunkSize) / 2, 0, Z ?? 0); // Center horizontally
+    p.translate(-((textLine.length / chunkSize - 1) * spacing) / 2 +400, 0, Z ?? 0); // Center horizontally
 
     let vector = [0, 0];
 
@@ -40,7 +41,7 @@ const drawLine = (p, textLine, spacing, VECTORS, Z) => {
 
         // Defensive fallback to 0 if undefined
         const newVector = VECTORS[i] ?? [1, 0];
-        console.log("chunk ", chunk, " ", i)
+
         vector[0] += newVector[0]
         vector[1] += newVector[1]
 
@@ -49,11 +50,21 @@ const drawLine = (p, textLine, spacing, VECTORS, Z) => {
 
         p.push();
         p.translate(x, y, 0);
+        p.textAlign(p.CENTER, p.CENTER);
 
-        p.rotateX(0.8)
+        if(newVector[0] == 0 && newVector[1] != 0){
+            p.fill("#FF0000")
+            p.rotateY(-Math.PI / 2)
+
+        }
+        else  p.rotateX(Math.PI / 2)
+ 
         p.text(chunk, 0, 0);
         p.pop();
     }
+    delta+=0.04
+    console.log("delta ",delta)
+    
 
     p.pop();
 }

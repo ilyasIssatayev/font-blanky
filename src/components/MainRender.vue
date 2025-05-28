@@ -9,8 +9,8 @@ let p5Instance = null
 
 let myFont = null;
 
-const LENGTH = 300;
-const DEPTH = 50;
+const LENGTH = 200;
+const DEPTH = 1;
 
 const waveData = [0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0]; // Extend as needed
 let VECTORS = []
@@ -52,7 +52,7 @@ const sketch = (p) => {
         p.text(`FPS: ${p.floor(p.frameRate())}`, -p.width / 2 + 10, -p.height / 2 + 20);
         p.pop();
 
-        p.camera(0, -800, 1000,    // eye position (x, y, z)
+        p.camera(0, -500, 1000,    // eye position (x, y, z)
         0, 0, 0,      // center of scene (look at origin)
         0, 1, 0)    // up vector (positive Y is up)
 
