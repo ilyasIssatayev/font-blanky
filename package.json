@@ -1,5 +1,5 @@
 {
-  "name": "font-blanky",
+  "name": "autoselectr-clone",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "p5": "^2.0.2",
     "vue": "^3.5.13",
-    "vue-p5": "^0.8.4"
+    "vue-router": "^4.2.5",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.3",
-    "vite": "^6.3.5"
+    "@vitejs/plugin-vue": "^4.6.2",
+    "vite": "^4.5.5"
   }
 }
