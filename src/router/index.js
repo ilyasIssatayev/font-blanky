@@ -8,12 +8,6 @@ const routes = [
     name: 'Home',
     component: Home
   },
-  {
-    path: '/car/:id',
-    name: 'CarDetails',
-    component: CarDetails,
-    props: true
-  }
 ]
 
 const router = createRouter({
