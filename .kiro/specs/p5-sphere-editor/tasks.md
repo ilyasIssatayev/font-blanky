@@ -13,7 +13,7 @@
     - Write unit tests for Sphere model
     - _Requirements: 3.2, 3.3, 3.4, 3.5_
 
-  - [ ] 2.2 Create Scene class and sphere store
+  - [x] 2.2 Create Scene class and sphere store
     - Implement Scene class with spheres array and camera properties
     - Set up Pinia store with spheres state, getters, and actions
     - Add methods for adding, updating, selecting, and deleting spheres
