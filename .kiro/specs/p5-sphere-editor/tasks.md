@@ -57,20 +57,20 @@
     - Set up camera bounds and smooth movement
     - _Requirements: 1.2, 4.1, 4.2_
 
-- [ ] 5. Create property control components
-  - [ ] 5.1 Implement SliderControl component
+- [x] 5. Create property control components
+  - [x] 5.1 Implement SliderControl component
     - Create reusable slider with min/max bounds and step values
     - Add real-time value updates with debouncing
     - Connect to sphere store for radius and rotation speed controls
     - _Requirements: 3.2, 3.3_
 
-  - [ ] 5.2 Implement ColorPicker component
+  - [x] 5.2 Implement ColorPicker component
     - Create color input with hex and RGB support
     - Add gradient color picker for start/end colors
     - Implement real-time color updates to selected sphere
     - _Requirements: 3.3_
 
-  - [ ] 5.3 Create position and material controls
+  - [x] 5.3 Create position and material controls
     - Implement X, Y, Z position sliders
     - Add material property controls (shininess, metallic)
     - Connect all controls to sphere property updates
