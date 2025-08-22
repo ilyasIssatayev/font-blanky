@@ -38,20 +38,20 @@
     - Connect buttons to store actions (without functionality yet)
     - _Requirements: 2.2_
 
-- [ ] 4. Implement P5.js canvas integration
-  - [ ] 4.1 Create P5Canvas component wrapper
+- [x] 4. Implement P5.js canvas integration
+  - [x] 4.1 Create P5Canvas component wrapper
     - Set up p5.js instance with WEBGL renderer
     - Implement canvas mounting and unmounting lifecycle
     - Add basic 3D scene setup with camera and lighting
     - _Requirements: 1.1, 1.2_
 
-  - [ ] 4.2 Implement basic sphere rendering
+  - [x] 4.2 Implement basic sphere rendering
     - Create sphere drawing function with position and radius
     - Add basic material and color application
     - Implement animation loop for continuous rendering
     - _Requirements: 1.1, 3.2, 3.3_
 
-  - [ ] 4.3 Add camera controls for 3D navigation
+  - [x] 4.3 Add camera controls for 3D navigation
     - Implement mouse drag for camera rotation around spheres
     - Add mouse wheel zoom functionality
     - Set up camera bounds and smooth movement
