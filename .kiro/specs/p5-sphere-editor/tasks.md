@@ -6,10 +6,10 @@
   - Set up Pinia store with basic state structure
   - _Requirements: 1.1, 2.1_
 
-- [ ] 2. Implement core data models and state management
-  - [ ] 2.1 Create Sphere class with all properties and validation
+- [-] 2. Implement core data models and state management
+  - [x] 2.1 Create Sphere class with all properties and validation
     - Implement Sphere constructor with default values (radius, position, colors, material)
-    - Add property validation methods for bounds checking
+    - Add property validationvmn methods for bounds checking
     - Write unit tests for Sphere model
     - _Requirements: 3.2, 3.3, 3.4, 3.5_
 
