@@ -1,3 +1,116 @@
+// Top Toolbar Styles
 .top-toolbar {
-  // Top toolbar styles will go here
+  grid-area: toolbar;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-lg);
+  height: var(--toolbar-height);
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  
+  &.toolbar-left {
+    flex: 1;
+  }
+  
+  &.toolbar-center {
+    flex: 2;
+    justify-content: center;
+  }
+  
+  &.toolbar-right {
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+.app-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.button-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.toolbar-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  
+  &:hover {
+    background-color: var(--bg-primary);
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &.primary {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+    
+    &:hover {
+      background-color: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+  }
+  
+  &.add-button {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+    font-weight: 600;
+    
+    &:hover {
+      background-color: #008833;
+      border-color: #008833;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .top-toolbar {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .app-title {
+    font-size: 16px;
+  }
+  
+  .toolbar-button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 12px;
+    
+    // Hide text on mobile, keep icons
+    span:not(.icon) {
+      display: none;
+    }
+  }
+  
+  .toolbar-section.toolbar-center {
+    flex: 1;
+  }
 }

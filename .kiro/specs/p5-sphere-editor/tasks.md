@@ -19,20 +19,20 @@
     - Add methods for adding, updating, selecting, and deleting spheres
     - _Requirements: 1.1, 4.3, 5.1, 5.2_
 
-- [ ] 3. Create basic layout components
-  - [ ] 3.1 Implement main layout component with CSS Grid
+- [x] 3. Create basic layout components
+  - [x] 3.1 Implement main layout component with CSS Grid
     - Create responsive three-panel layout (left sidebar, top toolbar, canvas area)
     - Implement panel resizing functionality
     - Add CSS custom properties for theming
     - _Requirements: 2.1, 2.3, 2.4_
 
-  - [ ] 3.2 Create LeftSidebar component structure
+  - [x] 3.2 Create LeftSidebar component structure
     - Build sidebar container with property sections
     - Add basic styling to match Figma-like design
     - Implement collapsible sections for different property groups
     - _Requirements: 2.2_
 
-  - [ ] 3.3 Create TopToolbar component with action buttons
+  - [x] 3.3 Create TopToolbar component with action buttons
     - Implement toolbar with play/pause, re-render, reset, and add sphere buttons
     - Add button styling and hover states
     - Connect buttons to store actions (without functionality yet)

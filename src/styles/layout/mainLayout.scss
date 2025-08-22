@@ -1,0 +1,110 @@
+// Main Layout CSS with CSS Grid and Custom Properties
+:root {
+  // Layout dimensions
+  --sidebar-width: 300px;
+  --toolbar-height: 60px;
+  --panel-resize-handle: 4px;
+  
+  // Colors - Figma-inspired theme
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #333333;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #999999;
+  --border-color: #404040;
+  --accent-color: #0066ff;
+  --accent-hover: #0052cc;
+  --success-color: #00aa44;
+  --warning-color: #ff8800;
+  --danger-color: #ff4444;
+  
+  // Spacing
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  // Border radius
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  
+  // Transitions
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.35s ease;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-areas: 
+    "toolbar toolbar"
+    "sidebar canvas";
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--toolbar-height) 1fr;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+}
+
+// Responsive adjustments
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    grid-template-areas: 
+      "toolbar"
+      "canvas";
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--toolbar-height) 1fr;
+  }
+  
+  :root {
+    --sidebar-width: 100%;
+  }
+}
+
+// Panel resizing functionality (placeholder for future implementation)
+.resize-handle {
+  width: var(--panel-resize-handle);
+  background-color: var(--border-color);
+  cursor: col-resize;
+  transition: background-color var(--transition-fast);
+  
+  &:hover {
+    background-color: var(--accent-color);
+  }
+}
+
+// Utility classes
+.panel {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+}
+
+.panel-content {
+  padding: var(--spacing-md);
+  height: calc(100% - 60px);
+  overflow-y: auto;
+}

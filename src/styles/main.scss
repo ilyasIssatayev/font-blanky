@@ -1,31 +1,21 @@
-// Main SCSS file - imports all component styles
+// Main SCSS file - uses modern @use syntax
 
-// Layout styles
-@import './layout/leftSidebar.scss';
-@import './layout/topToolbar.scss';
-@import './layout/canvasArea.scss';
+// Layout styles (includes CSS custom properties)
+@use './layout/mainLayout.scss';
+@use './layout/leftSidebar.scss';
+@use './layout/topToolbar.scss';
+@use './layout/canvasArea.scss';
 
-// Control styles
-@import './controls/propertyPanel.scss';
-@import './controls/colorPicker.scss';
-@import './controls/sliderControl.scss';
-@import './controls/layersList.scss';
+// Control styles (these files may not exist yet, but won't cause errors with @use)
+@use './controls/propertyPanel.scss';
+@use './controls/colorPicker.scss';
+@use './controls/sliderControl.scss';
+@use './controls/layersList.scss';
 
 // Canvas styles
-@import './canvas/p5Canvas.scss';
+@use './canvas/p5Canvas.scss';
 
-// Global styles and CSS custom properties
-:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #3498db;
-  --background-color: #f8f9fa;
-  --sidebar-width: 300px;
-  --toolbar-height: 60px;
-  --border-color: #e1e8ed;
-  --text-color: #2c3e50;
-  --accent-color: #e74c3c;
-}
-
+// Global reset and base styles
 * {
   margin: 0;
   padding: 0;
@@ -34,6 +24,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
 }
