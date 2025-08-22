@@ -49,6 +49,15 @@ const cameraState = ref({
   lastTouchDistance: null
 })
 
+// Sphere dragging state
+const dragState = ref({
+  isDraggingSphere: false,
+  draggedSphere: null,
+  dragStartPosition: null,
+  dragPlaneNormal: { x: 0, y: 0, z: 1 }, // Default to XY plane
+  dragPlaneDistance: 0
+})
+
 // P5.js sketch functions
 const sketch = (p) => {
   p.setup = () => {
@@ -91,7 +100,7 @@ const sketch = (p) => {
     
     // Render spheres if renderer is available
     if (sphereRenderer) {
-      sphereRenderer.render()
+      sphereRenderer.render(dragState.value)
     }
     
     // Draw coordinate axes for reference when no spheres
@@ -106,6 +115,32 @@ const sketch = (p) => {
   // Mouse interaction handlers
   p.mousePressed = () => {
     if (isMouseInCanvas(p)) {
+      // Check for sphere selection first
+      if (sphereRenderer) {
+        const clickedSphere = sphereRenderer.getSphereAtPositionSync(
+          p.mouseX, 
+          p.mouseY, 
+          sphereStore.camera, 
+          cameraState.value.distance
+        );
+        
+        if (clickedSphere) {
+          // Select the clicked sphere
+          sphereStore.selectSphere(clickedSphere.id);
+          emit('sphere-selected', clickedSphere);
+          
+          // Start sphere dragging
+          startSphereDrag(clickedSphere, p.mouseX, p.mouseY);
+          
+          // Don't start camera dragging if we clicked on a sphere
+          return false;
+        } else {
+          // Deselect all spheres if clicking on empty space
+          sphereStore.deselectAll();
+        }
+      }
+      
+      // Start camera dragging
       cameraState.value.isDragging = true
       cameraState.value.lastMouseX = p.mouseX
       cameraState.value.lastMouseY = p.mouseY
@@ -118,29 +153,44 @@ const sketch = (p) => {
   }
 
   p.mouseDragged = () => {
-    if (cameraState.value.isDragging && isMouseInCanvas(p)) {
-      const deltaX = p.mouseX - cameraState.value.lastMouseX
-      const deltaY = p.mouseY - cameraState.value.lastMouseY
+    if (isMouseInCanvas(p)) {
+      // Handle sphere dragging first
+      if (dragState.value.isDraggingSphere && dragState.value.draggedSphere) {
+        updateSphereDrag(p.mouseX, p.mouseY);
+        return false;
+      }
       
-      // Adjust sensitivity based on distance (closer = more sensitive)
-      const sensitivity = Math.max(0.005, Math.min(0.02, 200 / cameraState.value.distance))
-      
-      // Update target angles for smooth camera movement
-      cameraState.value.targetAngleY += deltaX * sensitivity
-      cameraState.value.targetAngleX -= deltaY * sensitivity
-      
-      // Clamp vertical rotation to prevent flipping
-      const maxAngle = Math.PI / 2 - 0.1
-      cameraState.value.targetAngleX = Math.max(-maxAngle, Math.min(maxAngle, cameraState.value.targetAngleX))
-      
-      cameraState.value.lastMouseX = p.mouseX
-      cameraState.value.lastMouseY = p.mouseY
-      
-      return false // Prevent default behavior
+      // Handle camera dragging
+      if (cameraState.value.isDragging) {
+        const deltaX = p.mouseX - cameraState.value.lastMouseX
+        const deltaY = p.mouseY - cameraState.value.lastMouseY
+        
+        // Adjust sensitivity based on distance (closer = more sensitive)
+        const sensitivity = Math.max(0.005, Math.min(0.02, 200 / cameraState.value.distance))
+        
+        // Update target angles for smooth camera movement
+        cameraState.value.targetAngleY += deltaX * sensitivity
+        cameraState.value.targetAngleX -= deltaY * sensitivity
+        
+        // Clamp vertical rotation to prevent flipping
+        const maxAngle = Math.PI / 2 - 0.1
+        cameraState.value.targetAngleX = Math.max(-maxAngle, Math.min(maxAngle, cameraState.value.targetAngleX))
+        
+        cameraState.value.lastMouseX = p.mouseX
+        cameraState.value.lastMouseY = p.mouseY
+        
+        return false // Prevent default behavior
+      }
     }
   }
 
   p.mouseReleased = () => {
+    // Stop sphere dragging
+    if (dragState.value.isDraggingSphere) {
+      stopSphereDrag();
+    }
+    
+    // Stop camera dragging
     cameraState.value.isDragging = false
     
     // Reset cursor
@@ -358,6 +408,122 @@ const updateCameraFromStore = () => {
 const updateStoreCamera = () => {
   // Update store camera rotation to match current camera state
   sphereStore.updateCameraRotation(cameraState.value.angleX, cameraState.value.angleY)
+}
+
+// Sphere dragging functions
+const startSphereDrag = (sphere, mouseX, mouseY) => {
+  dragState.value.isDraggingSphere = true
+  dragState.value.draggedSphere = sphere
+  dragState.value.dragStartPosition = { ...sphere.position }
+  
+  // Calculate drag plane based on camera orientation
+  // Use a plane perpendicular to the camera's view direction
+  const cam = sphereStore.camera
+  const camX = cam.position.x + cameraState.value.distance * Math.cos(cameraState.value.angleY) * Math.cos(cameraState.value.angleX)
+  const camY = cam.position.y + cameraState.value.distance * Math.sin(cameraState.value.angleX)
+  const camZ = cam.position.z + cameraState.value.distance * Math.sin(cameraState.value.angleY) * Math.cos(cameraState.value.angleX)
+  
+  // Calculate view direction (from camera to sphere)
+  const viewDir = {
+    x: sphere.position.x - camX,
+    y: sphere.position.y - camY,
+    z: sphere.position.z - camZ
+  }
+  
+  // Normalize view direction to get plane normal
+  const viewMag = Math.sqrt(viewDir.x * viewDir.x + viewDir.y * viewDir.y + viewDir.z * viewDir.z)
+  if (viewMag > 0) {
+    dragState.value.dragPlaneNormal = {
+      x: viewDir.x / viewMag,
+      y: viewDir.y / viewMag,
+      z: viewDir.z / viewMag
+    }
+  }
+  
+  // Calculate plane distance (dot product of sphere position and normal)
+  dragState.value.dragPlaneDistance = 
+    sphere.position.x * dragState.value.dragPlaneNormal.x +
+    sphere.position.y * dragState.value.dragPlaneNormal.y +
+    sphere.position.z * dragState.value.dragPlaneNormal.z
+  
+  // Change cursor to indicate dragging
+  p5Instance.canvas.style.cursor = 'move'
+}
+
+const updateSphereDrag = (mouseX, mouseY) => {
+  if (!dragState.value.draggedSphere) return
+  
+  // Convert mouse position to 3D world coordinates on the drag plane
+  const newPosition = screenToWorldPosition(mouseX, mouseY)
+  
+  if (newPosition) {
+    // Update sphere position in real-time
+    sphereStore.updateSphereProperty(
+      dragState.value.draggedSphere.id, 
+      'position', 
+      newPosition
+    )
+  }
+}
+
+const stopSphereDrag = () => {
+  dragState.value.isDraggingSphere = false
+  dragState.value.draggedSphere = null
+  dragState.value.dragStartPosition = null
+}
+
+const screenToWorldPosition = (screenX, screenY) => {
+  // Convert screen coordinates to normalized device coordinates
+  const x = (2.0 * screenX) / props.width - 1.0
+  const y = 1.0 - (2.0 * screenY) / props.height
+  
+  // Calculate camera position
+  const cam = sphereStore.camera
+  const camX = cam.position.x + cameraState.value.distance * Math.cos(cameraState.value.angleY) * Math.cos(cameraState.value.angleX)
+  const camY = cam.position.y + cameraState.value.distance * Math.sin(cameraState.value.angleX)
+  const camZ = cam.position.z + cameraState.value.distance * Math.sin(cameraState.value.angleY) * Math.cos(cameraState.value.angleX)
+  
+  // Create ray from camera through screen point
+  const rayOrigin = { x: camX, y: camY, z: camZ }
+  const rayDirection = {
+    x: x * 100 + (cam.position.x - camX),
+    y: y * 100 + (cam.position.y - camY),
+    z: cam.position.z - camZ
+  }
+  
+  // Normalize ray direction
+  const rayMag = Math.sqrt(rayDirection.x * rayDirection.x + rayDirection.y * rayDirection.y + rayDirection.z * rayDirection.z)
+  if (rayMag > 0) {
+    rayDirection.x /= rayMag
+    rayDirection.y /= rayMag
+    rayDirection.z /= rayMag
+  }
+  
+  // Intersect ray with drag plane
+  const normal = dragState.value.dragPlaneNormal
+  const planeDistance = dragState.value.dragPlaneDistance
+  
+  // Calculate ray-plane intersection
+  const denominator = rayDirection.x * normal.x + rayDirection.y * normal.y + rayDirection.z * normal.z
+  
+  if (Math.abs(denominator) < 0.0001) {
+    // Ray is parallel to plane
+    return null
+  }
+  
+  const t = (planeDistance - (rayOrigin.x * normal.x + rayOrigin.y * normal.y + rayOrigin.z * normal.z)) / denominator
+  
+  if (t < 0) {
+    // Intersection is behind the camera
+    return null
+  }
+  
+  // Calculate intersection point
+  return {
+    x: rayOrigin.x + t * rayDirection.x,
+    y: rayOrigin.y + t * rayDirection.y,
+    z: rayOrigin.z + t * rayDirection.z
+  }
 }
 
 // Lifecycle hooks

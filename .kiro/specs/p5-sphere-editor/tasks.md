@@ -76,14 +76,14 @@
     - Connect all controls to sphere property updates
     - _Requirements: 3.4, 3.5_
 
-- [ ] 6. Implement sphere selection and interaction
-  - [ ] 6.1 Add sphere click detection and selection
+- [x] 6. Implement sphere selection and interaction
+  - [x] 6.1 Add sphere click detection and selection
     - Implement ray casting for 3D sphere selection
     - Add visual selection indicators (outline or highlight)
     - Update property panel to show selected sphere properties
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 6.2 Implement sphere dragging in 3D space
+  - [x] 6.2 Implement sphere dragging in 3D space
     - Add mouse drag detection for selected spheres
     - Convert 2D mouse movement to 3D position changes
     - Update sphere position in real-time during drag

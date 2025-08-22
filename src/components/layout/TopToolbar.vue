@@ -1,25 +1,51 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useSphereStore } from '../../stores/sphereStore.js'
 
-// Toolbar state
-const isPlaying = ref(true)
+// Store
+const sphereStore = useSphereStore()
 
-// Placeholder functions - will be connected to store actions later
+// Toolbar state - sync with store
+const isPlaying = computed({
+  get: () => !sphereStore.isPaused,
+  set: (value) => sphereStore.setPaused(!value)
+})
+
+// Toolbar functions connected to store actions
 const togglePlayPause = () => {
-  isPlaying.value = !isPlaying.value
-  console.log('Toggle play/pause:', isPlaying.value ? 'playing' : 'paused')
+  sphereStore.togglePause()
 }
 
 const reRender = () => {
-  console.log('Re-render scene')
+  // Force a re-render by briefly pausing and resuming
+  const wasPaused = sphereStore.isPaused
+  sphereStore.setPaused(true)
+  setTimeout(() => {
+    sphereStore.setPaused(wasPaused)
+  }, 100)
 }
 
 const resetScene = () => {
-  console.log('Reset to defaults')
+  if (confirm('Are you sure you want to reset the scene? This will remove all spheres.')) {
+    sphereStore.resetScene()
+    // Add a default sphere after reset
+    setTimeout(() => {
+      sphereStore.addSphere()
+    }, 100)
+  }
 }
 
 const addSphere = () => {
-  console.log('Add new sphere')
+  // Add a new sphere with random position offset
+  const randomOffset = () => (Math.random() - 0.5) * 100
+  
+  sphereStore.addSphere({
+    position: {
+      x: randomOffset(),
+      y: randomOffset(),
+      z: randomOffset()
+    }
+  })
 }
 </script>
 
